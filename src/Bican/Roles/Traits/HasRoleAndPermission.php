@@ -248,9 +248,13 @@ trait HasRoleAndPermission
      */
     public function hasPermission($permission)
     {
-        return $this->getPermissions()->contains(function ($key, $value) use ($permission) {
-            return $permission == $value->id || Str::is($permission, $value->slug);
-        });
+        foreach ($this->getPermissions() as $userPermission) {
+            if ($permission == $userPermission->id || Str::is($permission, $userPermission->slug)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
