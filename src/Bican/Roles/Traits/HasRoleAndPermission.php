@@ -383,6 +383,11 @@ trait HasRoleAndPermission
         return (!is_array($argument)) ? preg_split('/ ?[,|] ?/', $argument) : $argument;
     }
 
+    public function startsWith($haystack, $needle)
+    {
+        return $needle !== '' && substr($haystack, 0, strlen($needle)) === (string) $needle;
+    }
+
     /**
      * Handle dynamic method calls.
      *
@@ -392,11 +397,11 @@ trait HasRoleAndPermission
      */
     public function __call($method, $parameters)
     {
-        if (starts_with($method, 'is')) {
+        if ($this->startsWith($method, 'is')) {
             return $this->is(snake_case(substr($method, 2), config('roles.separator')));
-        } elseif (starts_with($method, 'can')) {
+        } elseif ($this->startsWith($method, 'can')) {
             return $this->can(snake_case(substr($method, 3), config('roles.separator')));
-        } elseif (starts_with($method, 'allowed')) {
+        } elseif ($this->startsWith($method, 'allowed')) {
             return $this->allowed(snake_case(substr($method, 7), config('roles.separator')), $parameters[0], (isset($parameters[1])) ? $parameters[1] : true, (isset($parameters[2])) ? $parameters[2] : 'user_id');
         }
 
